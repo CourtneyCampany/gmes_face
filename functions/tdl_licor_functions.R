@@ -1,17 +1,3 @@
-#tdl formatting function----------------------------------------------------------------------------------
-
-tdlformat_func <- function(x){
-  x$calendar <- strptime(x$TIMESTAMP, format = "%d/%m/%Y")
-  x$calendar <- as.character(x$calendar)
-  x$clock <- as.character(x$TIME)
-  x$Date <- paste(x$calendar, x$clock, sep=" ")
-  x$datetime <- strptime(x$Date,  format = "%Y-%m-%d  %H:%M:%S")
-  
-  dfr <- x[,c("SiteOutput", "CorrConcA_Avg","CorrConcB_Avg",  "Corrdel13C_Avg", "datetime", "licor")]
-  
-  return(dfr)
-}
-
 
 ####licor formating function------------------------------------------------------------------------------------------
 licorformat_func <- function(x){
@@ -31,6 +17,47 @@ licorformat_func <- function(x){
 }
 
 
+#tdl formatting function-----------------------------------------------------------------------------------------------
+
+tdlformat_func <- function(x){
+  x$calendar <- strptime(x$TIMESTAMP, format = "%d/%m/%Y")
+  x$calendar <- as.character(x$calendar)
+  x$clock <- as.character(x$TIME)
+  x$Date <- paste(x$calendar, x$clock, sep=" ")
+  x$datetime <- strptime(x$Date,  format = "%Y-%m-%d  %H:%M:%S")
+  
+  dfr <- x[,c("SiteOutput", "CorrConcA_Avg","CorrConcB_Avg",  "Corrdel13C_Avg", "datetime", "licor")]
+  
+  return(dfr)
+}
+
+###xsi calulcation for csv with tdl data-------------------------------------------------------------------------------
+xsicalc_func <- function(x){
+  xsi_dfr <- x[x$SiteOutput != c(3,4),]
+  #give unique to ref and sample lines using odd/even tdl line #s
+  xsi_dfr$line_id <- ifelse(xsi_dfr$SiteOutput %% 2 == 1,"a", "b")
+  xsi_dfr$CO2_total <- (xsi_dfr$CorrConcA_Avg+xsi_dfr$CorrConcB_Avg)/(1-0.00474)
+  #seperate ref and sample lines for calculations
+  xsi_a <- xsi_dfr[xsi_dfr$line_id=="a",]
+  colnames(xsi_a)[(names(xsi_a) == "Corrdel13C_Avg")] <- "del13_ref"
+  colnames(xsi_a)[(names(xsi_a) == "CO2_total")] <- "CO2_total_ref"
+  
+  xsi_b <- xsi_dfr[xsi_dfr$line_id=="b",]
+  colnames(xsi_b)[(names(xsi_b) == "Corrdel13C_Avg")] <- "del13_samp"
+  colnames(xsi_b)[(names(xsi_b) == "CO2_total")] <- "CO2_total_samp"
+  
+  #new dfr with xsi, deltadiff, DELTA, and timestamp for matching
+  deltadiff<- xsi_b$del13_samp - xsi_a$del13_ref
+  xsi <- xsi_b$CO2_total_samp/(xsi_a$CO2_total_ref - xsi_b$CO2_total_samp)
+  xsi_calc <-data.frame(cbind(deltadiff, xsi))
+  xsi_calc$DELTA <- (1000 * xsi_calc$xsi * xsi_calc$deltadiff)/(1000+xsi_b$del13_samp-(xsi_calc$xsi*xsi_calc$deltadiff))
+  
+  #times back to this dataframe..which ones?
+  xsi_calc$timeavg <- xsi_a$datetime-((xsi_a$datetime - xsi_b$datetime)/2)
+  xsi_calc$licor <- xsi_dfr$licor[1]
+  
+  return(xsi_calc)
+}
 ####function to return unique max and min dates for each tree id----------------------------------------------------
 
 timerange_func <- function(x, dfr){
@@ -48,35 +75,9 @@ timerange_func <- function(x, dfr){
   times2 <- as.data.frame(times)
 }
 
-###xsi calulcation for csv with tdl data (needs input of sample id still)
-xsicalc_func <- function(x){
-  xsi_dfr <- x[x$SiteOutput != c(3,4),]
-  #give unique to ref and sample lines using odd/even tdl line #s
-  xsi_dfr$line_id <- ifelse(xsi_dfr$SiteOutput %% 2 == 1,"a", "b")
-  xsi_dfr$CO2_total <- (xsi_dfr$CorrConcA_Avg+xsi_dfr$CorrConcB_Avg)/(1-0.00474)
-  #seperate ref and sample lines for calculations
-  xsi_a <- xsi_dfr[xsi_dfr$line_id=="a",]
-  colnames(xsi_a)[(names(xsi_a) == "Corrdel13C_Avg")] <- "del13_ref"
-  colnames(xsi_a)[(names(xsi_a) == "CO2_total")] <- "CO2_total_ref"
 
-  xsi_b <- xsi_dfr[xsi_dfr$line_id=="b",]
-  colnames(xsi_b)[(names(xsi_b) == "Corrdel13C_Avg")] <- "del13_samp"
-  colnames(xsi_b)[(names(xsi_b) == "CO2_total")] <- "CO2_total_samp"
-  
-  #new dfr with xsi, deltadiff, DELTA, and timestamp for matching
-  deltadiff<- xsi_b$del13_samp - xsi_a$del13_ref
-  xsi <- xsi_b$CO2_total_samp/(xsi_a$CO2_total_ref - xsi_b$CO2_total_samp)
-  xsi_calc <-data.frame(cbind(deltadiff, xsi))
-  xsi_calc$DELTA <- (1000 * xsi_calc$xsi * xsi_calc$deltadiff)/(1000+xsi_b$del13_samp-(xsi_calc$xsi*xsi_calc$deltadiff))
-  
-  #times back to this dataframe..which ones?
-  xsi_calc$timeavg <- xsi_a$datetime-((xsi_a$datetime - xsi_b$datetime)/2)
-  xsi_calc$licor <- xsi_dfr$licor[1]
-  
-  return(xsi_calc)
-}
 
-###time match function to find minimum difference between two sets of datetimes-------------------------------------
+###time match function to find minimum difference between two sets of datetimes--------------------------------------
 timematch <- function(time1, time2)abs(time1-time2)
 
 
