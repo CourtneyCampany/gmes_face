@@ -11,6 +11,7 @@ tdl_oct22_2122 <- read.csv("tdl_oct22_2122.csv")
 tdl_oct22_1920 <- read.csv("tdl_oct22_1920.csv")
 
 ####format master licor file, will have two dataframes one with all data, and one with times for matching---------------
+licor_gmes <- chooseidfunc(licor_master)
 licor_gmes <- licorformat_func(licor_master)
 
 ###now run time range function if get samples id and time range

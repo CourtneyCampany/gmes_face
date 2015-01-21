@@ -1,12 +1,13 @@
-chooseidfunc <- function(dfr, ){
-  
-  
-  
+
+###function to create a unique sample id from user specific variable column names-----------------------------------
+
+chooseidfunc <- function(dfr, varnames, sep="-"){
+  dfr$ID <- as.factor(apply(dfr[,varnames], 1, function(x)paste(x, collapse=sep)))
+  return(dfr)
 }
 
-
 ####licor formating function------------------------------------------------------------------------------------------
-licorformat_func <- function(x){
+licorformat_func <- function(x, varnames, sep="-"){
   
   licorfirst<- which(colnames(x) == "Obs")
   licorlast<- which(colnames(x) == "AHs.Cs")
@@ -18,11 +19,7 @@ licorformat_func <- function(x){
   x$datetime<- strptime(x$Date2, format = "%d/%m/%Y  %H:%M:%S",  tz="UTC")
   dtcol <- which(colnames(x) == "datetime")
   licorcol <- which(colnames(x) == "licor")
-  
-  x$id <-paste(x$Ring,x$Tree, x$Canopy, x$CO2, sep="-")
-  x$id <- as.factor(x$id)
   idcol <- which(colnames(x) == "id")
-  
   
   #subset dataset to keep licor values, id, and datetime
   dfr <- x[,c(licorfirst:licorlast, licorcol, idcol, dtcol)]
@@ -40,7 +37,6 @@ licorformat_func <- function(x){
   dfr <- dfr[, c(licorfirst2:beforeO,ocol, afterO:licorlast2, licorcol2, idcol2, dtcol2 )]
   return(dfr)
 }
-
 
 #tdl formatting function-----------------------------------------------------------------------------------------------
 
