@@ -1,13 +1,16 @@
+###time match function to find minimum difference between two sets of datetimes
+timematch <- function(time1, time2)abs(time1-time2)
+
 
 ###function to create a unique sample id from user specific variable column names-----------------------------------
 
 chooseidfunc <- function(dfr, varnames, sep="-"){
-  dfr$ID <- as.factor(apply(dfr[,varnames], 1, function(x)paste(x, collapse=sep)))
+  dfr$id <- as.factor(apply(dfr[,varnames], 1, function(x)paste(x, collapse=sep)))
   return(dfr)
 }
 
 ####licor formating function------------------------------------------------------------------------------------------
-licorformat_func <- function(x, varnames, sep="-"){
+licorformat_func <- function(x){
   
   licorfirst<- which(colnames(x) == "Obs")
   licorlast<- which(colnames(x) == "AHs.Cs")
@@ -98,15 +101,10 @@ timerange_func <- function(x, dfr){
 }
 
 
-
-###time match function to find minimum difference between two sets of datetimes--------------------------------------
-timematch <- function(time1, time2)abs(time1-time2)
-
-
 ####gmes_func---------------------------------------------------------------------------------------------------------
 #for the moment i removed licor times
 
-gmes_func <- function(xsi_dfr, licor_dfr, times_dfr, licorrows=5,whichlicor="f2" ){
+gmes_func <- function(xsi_dfr, licor_dfr, times_dfr, licorrows=5, whichlicor="f2" ){
   
   ###subset licor_dfr by licor used
   licor_dfr2 <- licor_dfr[licor_dfr$licor == whichlicor,]
@@ -128,31 +126,37 @@ gmes_func <- function(xsi_dfr, licor_dfr, times_dfr, licorrows=5,whichlicor="f2"
   ii<- sapply(1:nrow(xsi_samples), function(i)which.min(timematch(xsi_samples$timeavg[i], licor_dfr2$datetime)))
   xsi_samples$datetime_match <- licor_dfr2$datetime[ii]
   
-  ###subsets of licor_dfr2 based on time match + 2 logs +- (nrow=5 in each list)
-#   licor_ids <- lapply(1:nrow(xsi_samples),
-#                       function(k) {
-#                         id_split <- licor_dfr2[licor_dfr2$datetime <= (xsi_samples$datetime_match[k]+(2.4*logtime)) &
-#                                                licor_dfr2$datetime >= (xsi_samples$datetime_match[k]-(2.4*logtime)), ]
-#                       })
-  thisrow <- ii 
+  thisrow <- as.vector(ii) 
   delr <- (licorrows-1)/2
-  licordfr[(thisrow-delr):(thisrow+delr),]
   
-  licor_ids <- lapply(1:nrow(xsi_samples),
-                      function(k) {
-                        id_split <- licor_dfr2[(thisrow-delr:(thisrow+delr),]
-                      })
+  licor_ids <- lapply(1:length(thisrow), function(k) {
+    id_split <- licor_dfr2[(thisrow[k]-delr):(thisrow[k]+delr),]
+  })
   
+    ##in each list if # of unique ids isgreater > 1 then null, null will disappear during rbind
+    deleteDoubles <- function(l, varname="id"){
+    
+      ii <- which(sapply(l, function(el)length(unique(el[,varname])) > 1))
+      l[ii] <- NULL
+      return(l)
+      }
   
+  licor_ids2 <- deleteDoubles(licor_ids)
   
   ###mean of each list, convert to dfr, cbind with xsi&DELTA from xsi_dfr (nrow must be equal)
-  licor_ids_datefix <- llply(licor_ids, function(x) c(x$datetime <- as.numeric(x$datetime), return(x)))
-  licor_ids_agg <- llply(licor_ids_datefix,function(x) summaryBy(.~id+Date+Empty_id, data=x, FUN=mean, keep.names=TRUE))
+  licor_ids_datefix <- llply(licor_ids2, function(x) c(x$datetime <- as.numeric(x$datetime), return(x)))
+  licor_ids_agg <- llply(licor_ids_datefix,function(x) summaryBy(.~id+licor, data=x, FUN=mean, keep.names=TRUE))
   licor_agg_dtfix <- llply(licor_ids_agg, function(x) c(x$datetime <- as.POSIXct(x$datetime,
                                                                                  origin= '1970-01-01', tz="UTC"), return(x)))
   
   licor_agg<- rbind.fill(licor_agg_dtfix)
-  ###nrow needs to be equal (STOP)
-  licor_xsi <- cbind(licor_agg, xsi_samples[,c("xsi", "DELTA")])
+  
+  ###now there is the possibility that there will be less licor values than xsi values, 
+  ###must rematch closest time row and then add that rows xsi and delta to new dfr
+  
+  dd<- sapply(1:nrow(licor_agg), function(i)which.min(timematch(licor_agg$datetime[i], xsi_samples$datetime_match)))
+  licor_agg$xsi <- xsi_samples$xsi[dd]
+  licor_agg$DELTA <- xsi_samples$DELTA[dd]
+  return(licor_agg)
+  
 }
-
