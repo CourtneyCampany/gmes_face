@@ -6,7 +6,7 @@ library(plyr)
 library(doBy)
 
 ####read data---------------------------------------------------------------------------------------------
-licor_master <- read.csv("licor_face_master.csv")
+licor_master <- read.csv("licor_master2.csv")
 tdl_oct22_2122 <- read.csv("tdl_oct22_2122.csv")
 tdl_oct22_1920 <- read.csv("tdl_oct22_1920.csv")
 
