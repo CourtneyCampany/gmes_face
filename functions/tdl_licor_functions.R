@@ -1,4 +1,9 @@
-###time match function to find minimum difference between two sets of datetimes
+
+# standard error function-------------------------------------------------------------------------------------------
+se <- function(x) sd(x)/sqrt(length(x))
+
+
+###time match function to find minimum difference between two sets of datetimes------------------------------------
 timematch <- function(time1, time2)abs(time1-time2)
 
 
@@ -104,7 +109,7 @@ timerange_func <- function(x, dfr){
 ####gmes_func---------------------------------------------------------------------------------------------------------
 #for the moment i removed licor times
 
-gmes_func <- function(xsi_dfr, licor_dfr, times_dfr, licorrows=5, whichlicor="f2" ){
+gmesdata_func <- function(xsi_dfr, licor_dfr, times_dfr, licorrows=5, whichlicor="f2" ){
   
   ###subset licor_dfr by licor used
   licor_dfr2 <- licor_dfr[licor_dfr$licor == whichlicor,]
@@ -160,3 +165,41 @@ gmes_func <- function(xsi_dfr, licor_dfr, times_dfr, licorrows=5, whichlicor="f2
   return(licor_agg)
   
 }
+
+####gmescalculation----------------------------------------------------------------------------------------------
+gmcalc_func <- function(x, a=4.4, ab= 2.9, e=30, b=29, f=16.2,del_growth = -8 , delR=-38, 
+                        k25r=0.728, k25g=38.89, Ea_r = 72.311, Ea_g = 20.437,Rgc=8.314472){
+  
+  x$CiCa <- x$Ci/x$CO2R
+  x$a_prime <- (ab*(x$CO2S-x$C2sfc)+a*(x$C2sfc-x$Ci))/(x$CO2S-x$Ci)
+  
+  x$Rd <- k25r * exp(Ea_r*((x$Tleaf+273.15)-298)/(298*Rgc*(x$Tleaf+273.15)))
+  x$Gstar <- k25g * exp(Ea_g*((x$Tleaf+273.15)-298)/(298*Rgc*(x$Tleaf+273.15)))
+  
+  x$rd_term <- e*x$Rd*(x$Ci-x$Gstar)/((x$Photo+x$Rd)*x$CO2S)
+  x$f_term <- f*x$Gstar/x$CO2S
+  
+  x$TleafminusTair <- x$Tleaf - x$Tair
+  x$TblockminusTair <- x$TBlk - x$Tair
+  
+  x$CO2Rdry <- x$CO2R/(1-x$H2OR/1000)
+  x$CO2Sdry <- x$CO2S/(1-x$H2OS/1000)
+  
+  x$t <- (1+x$a_prime/1000)*x$Trmmol/x$CndCO2/1000/2
+  x$t2 <- 1/(1-x$t)
+  x$t3 <- (1+x$t)/(1-x$t)
+  
+  x$Di <- x$a_prime * x$t2+ (x$t3 * b-x$a_prime * x$t2) * x$CiCa
+  x$DiminusDo <- x$Di - x$DELTA
+  
+  x$rd_term2 <- x$t3- x$rd_term
+  x$f_term2 <- x$t3 - x$f_term
+  
+  x$gm <- x$t3 * (b - 1.8 - x$Rd * e / (x$Rd+x$Photo)) * x$Photo/x$CO2S/(x$DiminusDo - x$rd_term2 - x$f_term2)
+  x$gm_bar <- x$gm*100/x$Press
+  return(x)
+}
+#----------------------------------------------------------------------------------------------
+
+
+

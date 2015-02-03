@@ -24,10 +24,16 @@ tdl_oct22_1920 <- tdlformat_func(tdl_oct22_1920)
 
 ####calculatre xsi/Delta with times by licor id
 xsi_oct22_f2 <- xsicalc_func(tdl_oct22_2122)
-xsi_oct22_f4 <- xsicalc_func(tdl_oct22_1920)
+#xsi_oct22_f4 <- xsicalc_func(tdl_oct22_1920)
 
 
 ##gm ready dataframe function
-gm_oct22_f2 <- gmes_func(xsi_oct22_f2, licor_gmes, licor_times, whichlicor="f2")
-gm_oct22_f4 <- gmes_func(xsi_oct22_f4, licor_gmes, licor_times, whichlicor="f4")
+gm_oct22_f2 <- gmesdata_func(xsi_oct22_f2, licor_gmes, licor_times, whichlicor="f2")
+#gm_oct22_f4 <- gmesdata_func(xsi_oct22_f4, licor_gmes, licor_times, whichlicor="f4")
+
+##calculate gmes
+gm2_oct22_f2 <- gmcalc_func(gm_oct22_f2 )
+
+gm_agg <- summaryBy(gm ~id, data=gm2_oct22_f2, FUN=c(mean, se))
+
 
