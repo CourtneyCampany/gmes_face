@@ -80,11 +80,9 @@ xsicalc_func <- function(x){
   xsi <- xsi_b$CO2_total_samp/(xsi_a$CO2_total_ref - xsi_b$CO2_total_samp)
   
   xsi_calc <-data.frame(cbind(deltadiff, xsi))
-  xsi_calc$DELTA <- (1000 * xsi_calc$xsi * xsi_calc$deltadiff)/(1000+xsi_b$del13_samp-(xsi_calc$xsi*xsi_calc$deltadiff))
-  
-  #times back to this dataframe..which ones?
-  xsi_calc$timeavg <- xsi_a$datetime-((xsi_a$datetime - xsi_b$datetime)/2)
-  xsi_calc$licor <- xsi_dfr$licor[1]
+    xsi_calc$DELTA <- (1000 * xsi_calc$xsi * xsi_calc$deltadiff)/(1000+xsi_b$del13_samp-(xsi_calc$xsi*xsi_calc$deltadiff))
+    xsi_calc$timeavg <- xsi_a$datetime-((xsi_a$datetime - xsi_b$datetime)/2)
+    xsi_calc$licor <- xsi_dfr$licor[1]
   
   return(xsi_calc)
 }
@@ -125,7 +123,7 @@ gmesdata_func <- function(xsi_dfr, licor_dfr, times_dfr, licorrows=5, whichlicor
   }
   
   xsi_samples <- xsi_dfr[xsi_dfr$id != "no_sample",]
-  if(any(xsi_samples$xsi >20)) warning ("You have XSI values over the acceptable limit")
+  #if(any(xsi_samples$xsi >20)) warning ("You have XSI values over the acceptable limit")
   
   ###add closest matched licor time "datetime_match" to xsi_dfr with timematch func (min diff)
   ii<- sapply(1:nrow(xsi_samples), function(i)which.min(timematch(xsi_samples$timeavg[i], licor_dfr2$datetime)))
