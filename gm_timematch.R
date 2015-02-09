@@ -19,9 +19,13 @@ licor_times <- timerange_func(licor_gmes)
 
 ####read all tdl files and run tdl formating and xsi functions on each list of tdl files---------------------------------
 
-tdl_oct22_2122 <- read.csv("tdl_files/tdl_oct22_2122.csv")
-tdl_oct22_2122 <- tdlformat_func(tdl_oct22_2122)
-xsi_oct22_f2 <- xsicalc_func(tdl_oct22_2122)
+# tdl_oct22_2122 <- read.csv("tdl_files/tdl_oct22_2122.csv")
+# tdl_oct22_2122 <- tdlformat_func(tdl_oct22_2122)
+# xsi_oct22_f2 <- xsicalc_func(tdl_oct22_2122)
+
+names<- list.files(path="tdl_files/",pattern="csv",full.names=TRUE)
+names2 <- gsub("tdl_files/", "", names)
+names2 <- gsub(".csv", "", names2)
 
 tdl_files <- llply(list.files(path="tdl_files/",pattern="csv",full.names=TRUE),function(filename) {
   dat=read.csv(filename)
@@ -34,22 +38,28 @@ tdl_files <- llply(list.files(path="tdl_files/",pattern="csv",full.names=TRUE),f
 tdl_formatted <- llply(tdl_files, tdlformat_func)
 
 ####calculatre xsi/Delta with times by licor id
-xsi_face <- llply(tdl_formatted, function(x) c(data.frame(x), xsicalc_func(x)))
+xsi_face <- llply(tdl_formatted, function(x)  xsicalc_func(x))
+xsi_dfr <- llply(xsi_face, function(x) data.frame(x))
 
 
-######here the length of new variables are longer thatn ornginal data....................................
+# test2 <- xsi_dfr[2]
+# test <- data.frame(xsi_dfr[2])
 
-test <- xsi_face[1]
-test2 <- data.frame(test)
+xsi_dfr2 <- setNames(xsi_dfr, names2)
+list2env(lapply(xsi_dfr2, as.data.frame), .GlobalEnv)
 
 
 ##gm ready dataframe function
-gm_oct22_f2 <- gmesdata_func(xsi_oct22_f2, licor_gmes, licor_times, whichlicor="f2")
-gm_oct22_f4 <- gmesdata_func(data.frame(xsi_face[1]), licor_gmes, licor_times, whichlicor="f4")
+licor_values <- unique(licor_gmes$licor)
 
+#oct22
+gm_oct22_f2 <- gmesdata_func(tdl_oct22_1920, licor_gmes, licor_times, whichlicor="f2")
+gm_oct22_f4 <- gmesdata_func(tdl_oct22_1920, licor_gmes, licor_times, whichlicor="f4")
 
+#oct24
+oct24_1920 <- gmesdata_func(tdl_oct24_1920, licor_gmes, licor_times, whichlicor="f2")
+oct24_1920 <- gmesdata_func(tdl_oct24_1920, licor_gmes, licor_times, whichlicor="f4")
 
-gm_oct22_f4 <- gmesdata_func(xsi_face[2], licor_gmes, licor_times, whichlicor="f4")
 
 ##calculate gmes
 gm2_oct22_f2 <- gmcalc_func(gm_oct22_f2 )
