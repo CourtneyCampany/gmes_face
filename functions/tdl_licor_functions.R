@@ -105,8 +105,6 @@ timerange_func <- function(x, dfr){
 
 
 ####gmes_func---------------------------------------------------------------------------------------------------------
-#for the moment i removed licor times
-
 gmesdata_func <- function(xsi_dfr, licor_dfr, times_dfr, licorrows=5, whichlicor="f2" ){
   
   ###subset licor_dfr by licor used
