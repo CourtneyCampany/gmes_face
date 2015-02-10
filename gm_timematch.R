@@ -17,7 +17,6 @@ licor_times <- timerange_func(licor_gmes)
 
 
 ####read all tdl files and run tdl formating and xsi functions on each list element-------------------------------------
-
   names<- list.files(path="tdl_files/",pattern="csv",full.names=TRUE)
 
   tdl_files <- llply(list.files(path="tdl_files/",pattern="csv",full.names=TRUE),function(filename) {
