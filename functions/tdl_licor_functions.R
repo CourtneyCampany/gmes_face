@@ -95,8 +95,8 @@ timerange_func <- function(x, dfr){
       max.dt <- max(x$datetime)
       min.dt <- min(x$datetime)
       id<- unique(x$id)
-      newdfr <- data.frame(min=min.dt, max=max.dt,id=id)
-
+      licor=x$licor
+      newdfr <- data.frame(min=min.dt, max=max.dt,id=id, licor=licor)
     })
   #below needs package 'data.table'
   times <- rbindlist(dfr)
@@ -112,14 +112,17 @@ gmesdata_func <- function(xsi_dfr, licor_dfr, times_dfr, licorrows=5, whichlicor
   ###subset licor_dfr by licor used
   licor_dfr2 <- licor_dfr[licor_dfr$licor == whichlicor,]
   licor_dfr2 <- droplevels(licor_dfr2)
+  ###subset times_dfr by licor used
+  times_dfr2 <- times_dfr[times_dfr$licor == whichlicor,] 
+  times_dfr2 <- droplevels(times_dfr2)
   
   ###use times_dfr to add "sample id" to xsi dfr based datetime interval
   xsi_dfr$id <- "no_sample"
   
   for(i in 1:nrow(times_dfr)){
     
-    j <- which(xsi_dfr$timeavg >= times_dfr$min[i] & xsi_dfr$timeavg <= times_dfr$max[i])
-    xsi_dfr$id[j] <- as.character(times_dfr$id[i])
+    j <- which(xsi_dfr$timeavg >= times_dfr2$min[i] & xsi_dfr$timeavg <= times_dfr2$max[i])
+    xsi_dfr$id[j] <- as.character(times_dfr2$id[i])
   }
   
   xsi_samples <- xsi_dfr[xsi_dfr$id != "no_sample",]

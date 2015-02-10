@@ -16,55 +16,72 @@ licor_gmes <- licorformat_func(licor_gmes)
 licor_times <- timerange_func(licor_gmes)
 
 
+####read all tdl files and run tdl formating and xsi functions on each list element-------------------------------------
 
-####read all tdl files and run tdl formating and xsi functions on each list of tdl files---------------------------------
+  names<- list.files(path="tdl_files/",pattern="csv",full.names=TRUE)
 
-# tdl_oct22_2122 <- read.csv("tdl_files/tdl_oct22_2122.csv")
-# tdl_oct22_2122 <- tdlformat_func(tdl_oct22_2122)
-# xsi_oct22_f2 <- xsicalc_func(tdl_oct22_2122)
-
-names<- list.files(path="tdl_files/",pattern="csv",full.names=TRUE)
-names2 <- gsub("tdl_files/", "", names)
-names2 <- gsub(".csv", "", names2)
-
-tdl_files <- llply(list.files(path="tdl_files/",pattern="csv",full.names=TRUE),function(filename) {
+  tdl_files <- llply(list.files(path="tdl_files/",pattern="csv",full.names=TRUE),function(filename) {
   dat=read.csv(filename)
-  dat$filename=filename
-  return(dat)
-})
+  })
+
+  ####format tdl data (will be csv covering a day and a ref/sample line with samples within)
+  tdl_formatted <- llply(tdl_files, tdlformat_func)
+
+  ####calculatre xsi/Delta with times by licor id
+  xsi_face <- llply(tdl_formatted, function(x)  xsicalc_func(x))
+  xsi_dfr <- llply(xsi_face, function(x) data.frame(x))
+
+  ####name each list by filename and export to global environment as dfr
+  names2 <- gsub("tdl_files/", "", names)
+  names2 <- gsub(".csv", "", names2)
+  
+  xsi_dfr2 <- setNames(xsi_dfr, names2)
+  list2env(lapply(xsi_dfr2, as.data.frame), .GlobalEnv)
 
 
-####format tdl data (will be csv covering a day and a ref/sample line with samples within)
-tdl_formatted <- llply(tdl_files, tdlformat_func)
-
-####calculatre xsi/Delta with times by licor id
-xsi_face <- llply(tdl_formatted, function(x)  xsicalc_func(x))
-xsi_dfr <- llply(xsi_face, function(x) data.frame(x))
-
-
-# test2 <- xsi_dfr[2]
-# test <- data.frame(xsi_dfr[2])
-
-xsi_dfr2 <- setNames(xsi_dfr, names2)
-list2env(lapply(xsi_dfr2, as.data.frame), .GlobalEnv)
-
-
-##gm ready dataframe function
-licor_values <- unique(licor_gmes$licor)
+##gm ready dataframe function-------------------------------------------------------------------------------
+#licor_values <- unique(licor_gmes$licor)
 
 #oct22
-gm_oct22_f2 <- gmesdata_func(tdl_oct22_1920, licor_gmes, licor_times, whichlicor="f2")
-gm_oct22_f4 <- gmesdata_func(tdl_oct22_1920, licor_gmes, licor_times, whichlicor="f4")
+oct22_1920 <- gmesdata_func(tdl_oct22_1920, licor_gmes, licor_times, whichlicor="f4")
+oct22_2122 <- gmesdata_func(tdl_oct22_2122, licor_gmes, licor_times, whichlicor="f2")
 
-#oct24
-oct24_1920 <- gmesdata_func(tdl_oct24_1920, licor_gmes, licor_times, whichlicor="f2")
-oct24_1920 <- gmesdata_func(tdl_oct24_1920, licor_gmes, licor_times, whichlicor="f4")
+#oct23
+oct23_1920 <- gmesdata_func(tdl_oct23_1920, licor_gmes, licor_times, whichlicor="f4")
+oct23_2122 <- gmesdata_func(tdl_oct23_2122, licor_gmes, licor_times, whichlicor="f2")
 
+#oct27
+oct27_1920 <- gmesdata_func(tdl_oct27_1920, licor_gmes, licor_times, whichlicor="f4")
+oct27_2122 <- gmesdata_func(tdl_oct27_2122, licor_gmes, licor_times, whichlicor="f2")
 
-##calculate gmes
-gm2_oct22_f2 <- gmcalc_func(gm_oct22_f2 )
+#oct28
+oct28_1920 <- gmesdata_func(tdl_oct28_1920, licor_gmes, licor_times, whichlicor="f4")
+oct28_2122 <- gmesdata_func(tdl_oct28_2122, licor_gmes, licor_times, whichlicor="f2")
 
-##
-gm_agg <- summaryBy(gm ~id, data=gm2_oct22_f2, FUN=c(mean, se))
+#oct29
+oct29_1920 <- gmesdata_func(tdl_oct29_1920, licor_gmes, licor_times, whichlicor="f4")
+oct29_2122 <- gmesdata_func(tdl_oct29_2122, licor_gmes, licor_times, whichlicor="f2")
+
+#oct30
+oct30_1920 <- gmesdata_func(tdl_oct30_1920, licor_gmes, licor_times, whichlicor="f4")
+oct30_2122 <- gmesdata_func(tdl_oct30_2122, licor_gmes, licor_times, whichlicor="f6")
+
+##calculate gmes---------------------------------------------------------------------------------------------
+gm_oct22_f4 <- gmcalc_func(oct22_1920 )
+gm_oct22_f2 <- gmcalc_func(oct22_2122 )
+gm_oct23_f4 <- gmcalc_func(oct23_1920 )
+gm_oct23_f2 <- gmcalc_func(oct23_2122 )
+gm_oct27_f4 <- gmcalc_func(oct27_1920 )
+gm_oct27_f2 <- gmcalc_func(oct27_2122 )
+gm_oct28_f4 <- gmcalc_func(oct28_1920 )
+gm_oct28_f2 <- gmcalc_func(oct28_2122 )
+gm_oct29_f4 <- gmcalc_func(oct29_1920 )
+gm_oct29_f2 <- gmcalc_func(oct29_2122 )
+gm_oct30_f4 <- gmcalc_func(oct30_1920 )
+gm_oct30_f6 <- gmcalc_func(oct30_2122 )
+
+##rbind these these by pattern in global environment??????
+##then summarise by id
+
 
 
