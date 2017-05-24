@@ -1,9 +1,9 @@
 
-
 # read and format data ----------------------------------------------------
 
 gmes <-read.csv("master_data_file_clean.csv")
   gmes$Date <- as.Date(gmes$Date)
+  gmes$treatment <- with(gmes, paste(co2grow, position, sep="-"))
 
 #anatomy is doubled up so split dfr by CO2 measurement level (instantaneous effect) 
 gmes_amb <- gmes[gmes$co2meas == "amb",]
@@ -29,32 +29,36 @@ legpch <- c(16,16,16,17)
 #Physiology (growth CO2)
 par(mar=c(5,5,1,1), cex=1.25, las=1, cex.axis=.8, cex.lab=1, mgp=c(3,1,0))
 
-plot(Photo ~ gmes, data=gmes, col=co2grow, pch=pchs[canopy], ylim=c(0,30), xlim=c(0,.5), xlab=gmlab, ylab=photolab)
+plot(Photo ~ gmes, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylim=c(0,30), xlim=c(0,.5), xlab=gmlab, ylab=photolab)
   legend("topleft", leglab, pch=legpch, col=allcols,inset = 0.01, bty='n',cex=.8)
 
-plot(Photo ~ mean_gs, data=gmes, col=co2grow, pch=pchs[canopy], ylim=c(0,30), xlim=c(0,.4), xlab=condlab, ylab=photolab)
+plot(Photo ~ mean_gs, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylim=c(0,30), xlim=c(0,.4), xlab=condlab, ylab=photolab)
   legend("topleft", leglab, pch=legpch, col=allcols,inset = 0.01, bty='n',cex=.8)
 
-plot(gmes ~ mean_gs, data=gmes, col=co2grow, pch=pchs[canopy], ylim=c(0,.5), xlim=c(0,.4),xlab=condlab, ylab=gmlab)
+plot(gmes ~ mean_gs, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylim=c(0,.5), xlim=c(0,.4),xlab=condlab, ylab=gmlab)
   legend("topleft", leglab, pch=legpch, col=allcols,inset = 0.01, bty='n',cex=.8)
+  
+##make sure gm and cc are related
+plot(gmes~mean_cc, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylab=gmlab,ylim=c(0,.5))
+
+#make some informative boxplots  
+boxplot(gmes~treatment, data=gmes_amb)
+boxplot(mean_gs~treatment, data=gmes_amb)
+boxplot(Photo~treatment, data=gmes_amb, ylim=c(0,25), ylab=photolab)
 
 #Anatomy (growth CO2)
   
-plot(gmes~mesolay.mean, data=gmes_amb2, col=co2grow, pch=pchs[canopy])
+plot(gmes~mesolay.mean, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylab=gmlab,ylim=c(0,.5))
+plot(gmes~length.par1.mean, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylab=gmlab,ylim=c(0,.5))
 
-plot(gmes~leafw, data=gmes_amb2, col=co2grow, pch=pchs[canopy])
+# plot(gmes~leafw, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylab=gmlab,ylim=c(0,.5))
+# plot(gmes~mesolay.mean, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylab=gmlab,ylim=c(0,.5))
+# plot(gmes~epi_up, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylab=gmlab,ylim=c(0,.5))
+# plot(gmes~epi_low, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylab=gmlab,ylim=c(0,.5))
+# plot(gmes~meso.mean, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylab=gmlab,ylim=c(0,.5))
 
-plot(gmes~mesolay.mean, data=gmes_amb2, col=co2grow, pch=pchs[canopy])
 
-plot(gmes~epi_up, data=gmes_amb2, col=co2grow, pch=pchs[canopy])
 
-plot(gmes~epi_low, data=gmes_amb2, col=co2grow, pch=pchs[amb$canopy])
 
-plot(gmes~meso.mean, data=gmes_amb2, col=co2grow, pch=pchs[amb$canopy])
 
-plot(gmes~length.par1.mean, data=gmes_amb2, col=co2grow, pch=pchs[amb$canopy])
-
-plot(gmes~mean_gs, data=gmes_amb2, col=co2grow, pch=pchs[amb$canopy])
-
-plot(gmes~mean_cc, data=gmes_amb2, col=co2grow, pch=pchs[amb$canopy])
 
