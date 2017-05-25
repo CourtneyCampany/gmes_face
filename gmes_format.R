@@ -13,8 +13,9 @@ gmes_elev <- gmes[gmes$co2meas == "elev",]
 gmes_amb2 <- gmes[gmes$co2grow == "amb",]
 gmes_elev2 <- gmes[gmes$co2grow == "elev",]
 
+###i get a little confused about how to analzye instantaneous or growth co2 :/
 
-# basic plots -------------------------------------------------------------
+# plot objects -------------------------------------------------------------
 palette(c("black", "red"))
 pchs <- c(16,17)
 gmlab <-expression(italic(g)[m]~~(mol~m^-2~s^-1))
@@ -26,7 +27,7 @@ legpch <- c(16,16,16,17)
 
 #try a bunch, keep the ones that may should a trend to analyze
 
-#Physiology (growth CO2)
+# Physiology (growth CO2)------------------------------------
 par(mar=c(5,5,1,1), cex=1.25, las=1, cex.axis=.8, cex.lab=1, mgp=c(3,1,0))
 
 plot(Photo ~ gmes, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylim=c(0,30), xlim=c(0,.5), xlab=gmlab, ylab=photolab)
@@ -46,10 +47,11 @@ boxplot(gmes~treatment, data=gmes_amb)
 boxplot(mean_gs~treatment, data=gmes_amb)
 boxplot(Photo~treatment, data=gmes_amb, ylim=c(0,25), ylab=photolab)
 
-#Anatomy (growth CO2)
+# Anatomy (growth CO2)----------------------------------------
   
-plot(gmes~mesolay.mean, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylab=gmlab,ylim=c(0,.5))
+plot(gmes~mesolay.mean, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylab=gmlab,ylim=c(0,.5), xlim=c(6,10))
 plot(gmes~length.par1.mean, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylab=gmlab,ylim=c(0,.5))
+  #should we check everything against Anet too??
 
 # plot(gmes~leafw, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylab=gmlab,ylim=c(0,.5))
 # plot(gmes~mesolay.mean, data=gmes_amb, col=co2grow, pch=pchs[canopy], ylab=gmlab,ylim=c(0,.5))
