@@ -1,0 +1,37 @@
+---
+title: "Methods"
+author: 
+date: 
+output:
+  word_document:
+    reference_docx: manuscriptstyle_pce.docx
+csl: plant-cell-environment.csl
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Site description 
+
+## Leaf gas exchange, coupled with concurrent measurements of carbon isotope discrimination to estimate mesophyll conductance
+Leaf gas exchange measurements were performed between October 22^nd^ - 30^th^, 2014 at the EucFACE experiment. Measurements were taken on representative fully expanded leaves for the upper and lower canopy of 2 trees in each experimental ring. Small branches, including the measurement leaf, were clipped and re-cut under water prior to gas exchange measurements. Due to an insect outbreak in 2 of the ambient [CO~2~] control rings during the measurement period some leaves were sampled in the nearest unaffected tree to the border of the experimental ring (rings 3 & 6).
+
+\
+Simultaneous gas exchange and C isotope discrimination measurements were conducted based on methods described in @tazoe2011using and @evans2013temperature. Leaf level gas exchange was measured with a 2 x 3 cm leaf cuvette and red/blue light source using a portable gas exchange system (LI-6400XT, LI-COR, Lincoln, NE, USA). The gas exchange system was coupled with a tunable diode laser (TDL; TGA100,Campbell Scientific, Inc., Logan, UT, USA) for measurements of ^13^C isotope discrimination. The CO~2~ in the reference cell was set at a [CO~2~] that allowed an ambient atmospheric [CO~2~] (400 ppm) in the sample cell to be achieved. This CO~2~ set point in the reference cell depends on the actual leaf photosynthetic rate, which was approximately +10-15 ppm CO~2~. Once these measurements were completed the [CO~2~] was increased in the reference cell to achieve the elevated atmospheric [CO~2~] of the EucFACE experiment (550 ppm) in the sample cell. The Leaf temperature were controlled at 25&degC, measurements were made at ambient air humidity and the flow rate was set at 200 $\mu$mol s^-1^. Gas exchange data were autologged every 10 s for a total of 12 min.
+
+\
+Once CO~2~ and water vapour flux values were stable for each leaf measurement, the sample and reference gas lines were diverted to the TDL via T-junctions inserted into the reference gas tube and match valve outlet of the LI-6400XT. The gas streams were dried by passing through napion gas dryers in the respective gas lines and then ^12^CO~2~ and ^13^CO~2~ concentrations were measured for each gas stream by the TDL. Reference, sample and two calibration gases were run on alternating 80 s loops (20 s each) for the same 12 min period as gas exchange. TDL data were averaged over the last 10 s of reference line and sample line gas streams over each loop for calculations. The two calibration gases were drawn from compressed air tanks (330 and 740 ppm CO~2~) in order to correct for gain drift of the TDL on each measurement cycle.
+
+\
+Mesophyll conductance was calculated from carbon isotope discrimination with equations and fractionation factors as presented in @evans2013temperature, including the ternary corrections proposed by @farquhar2012ternary. Here, the CO~2~ compensation point ($\Gamma_{*}$) and respiration during the day (R~d~) parameters originally derived for tobacco plants [@von1994kinetics] were replaced with parameters derived for *Eucalyptus globulus* from @crous2012light when calculating *g*~m~. Full descriptions of this method, including carbon isotope discrimination equations with ternary corrections, can be found at [@campany2016coupled].  
+
+\
+Once *g*~m~ was calculated, *C*~c~ and the drawdown of CO~2~ from the intercellular air spaces to the site of carboxylation were estimated from the relationship between *g*~m~ and leaf photosynthesis rate (*A*~n~) by: 
+
+\
+(1)
+$$g_m = \frac{A_n}{C_i-C_c}$$
+
+# References

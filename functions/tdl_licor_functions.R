@@ -1,12 +1,3 @@
-
-# standard error function-------------------------------------------------------------------------------------------
-se <- function(x) sd(x)/sqrt(length(x))
-
-
-###time match function to find minimum difference between two sets of datetimes------------------------------------
-timematch <- function(time1, time2)abs(time1-time2)
-
-
 ###function to create a unique sample id from user specific variable column names-----------------------------------
 
 chooseidfunc <- function(dfr, varnames, sep="-"){
@@ -46,6 +37,23 @@ licorformat_func <- function(x){
   return(dfr)
 }
 
+####function to return unique max and min dates for each tree id----------------------------------------------------
+
+timerange_func <- function(x, dfr){
+  
+  x_sp <- split(x, x$id)
+  dfr<- lapply(x_sp, function(x){
+    max.dt <- max(x$datetime)
+    min.dt <- min(x$datetime)
+    id<- unique(x$id)
+    licor=x$licor
+    newdfr <- data.frame(min=min.dt, max=max.dt,id=id, licor=licor)
+  })
+  #below needs package 'data.table'
+  times <- rbindlist(dfr)
+  times2  <- unique(as.data.frame(times))
+}
+
 #tdl formatting function-----------------------------------------------------------------------------------------------
 
 tdlformat_func <- function(x){
@@ -80,29 +88,12 @@ xsicalc_func <- function(x){
   xsi <- xsi_b$CO2_total_samp/(xsi_a$CO2_total_ref - xsi_b$CO2_total_samp)
   
   xsi_calc <-data.frame(cbind(deltadiff, xsi))
-    xsi_calc$DELTA <- (1000 * xsi_calc$xsi * xsi_calc$deltadiff)/(1000+xsi_b$del13_samp-(xsi_calc$xsi*xsi_calc$deltadiff))
-    xsi_calc$timeavg <- xsi_a$datetime-((xsi_a$datetime - xsi_b$datetime)/2)
-    xsi_calc$licor <- xsi_dfr$licor[1]
+  xsi_calc$DELTA <- (1000 * xsi_calc$xsi * xsi_calc$deltadiff)/(1000+xsi_b$del13_samp-(xsi_calc$xsi*xsi_calc$deltadiff))
+  xsi_calc$timeavg <- xsi_a$datetime-((xsi_a$datetime - xsi_b$datetime)/2)
+  xsi_calc$licor <- xsi_dfr$licor[1]
   
   return(xsi_calc)
 }
-####function to return unique max and min dates for each tree id----------------------------------------------------
-
-timerange_func <- function(x, dfr){
-  
-  x_sp <- split(x, x$id)
-  dfr<- lapply(x_sp, function(x){
-      max.dt <- max(x$datetime)
-      min.dt <- min(x$datetime)
-      id<- unique(x$id)
-      licor=x$licor
-      newdfr <- data.frame(min=min.dt, max=max.dt,id=id, licor=licor)
-    })
-  #below needs package 'data.table'
-  times <- rbindlist(dfr)
-  times2 <- as.data.frame(times)
-}
-
 
 ####gmes_func---------------------------------------------------------------------------------------------------------
 gmesdata_func <- function(xsi_dfr, licor_dfr, times_dfr, licorrows=5, whichlicor="f2" ){
@@ -137,13 +128,13 @@ gmesdata_func <- function(xsi_dfr, licor_dfr, times_dfr, licorrows=5, whichlicor
     id_split <- licor_dfr2[(thisrow[k]-delr):(thisrow[k]+delr),]
   })
   
-    ##in each list if # of unique ids isgreater > 1 then null, null will disappear during rbind
-    deleteDoubles <- function(l, varname="id"){
+  ##in each list if # of unique ids isgreater > 1 then null, null will disappear during rbind
+  deleteDoubles <- function(l, varname="id"){
     
-      ii <- which(sapply(l, function(el)length(unique(el[,varname])) > 1))
-      l[ii] <- NULL
-      return(l)
-      }
+    ii <- which(sapply(l, function(el)length(unique(el[,varname])) > 1))
+    l[ii] <- NULL
+    return(l)
+  }
   
   licor_ids2 <- deleteDoubles(licor_ids)
   
@@ -165,9 +156,16 @@ gmesdata_func <- function(xsi_dfr, licor_dfr, times_dfr, licorrows=5, whichlicor
   
 }
 
-####gmescalculation----------------------------------------------------------------------------------------------
-gmcalc_func <- function(x, a=4.4, ab= 2.9, e=30, b=29, f=16.2,del_growth = -8 , delR=-38, 
+
+###time match function to find minimum difference between two sets of datetimes------------------------------------
+timematch <- function(time1, time2)abs(time1-time2)
+
+
+###gmes function
+gmcalc_func <- function(x, a=4.4, ab= 2.9, b=29, f=16.2,del_growth = -8 , delR=-5, 
                         k25r=0.728, k25g=38.89, Ea_r = 72.311, Ea_g = 20.437,Rgc=8.314472){
+  
+  e = delR - del_growth
   
   x$CiCa <- x$Ci/x$CO2R
   x$a_prime <- (ab*(x$CO2S-x$C2sfc)+a*(x$C2sfc-x$Ci))/(x$CO2S-x$Ci)
@@ -196,9 +194,34 @@ gmcalc_func <- function(x, a=4.4, ab= 2.9, e=30, b=29, f=16.2,del_growth = -8 , 
   
   x$gm <- x$t3 * (b - 1.8 - x$Rd * e / (x$Rd+x$Photo)) * x$Photo/x$CO2S/(x$DiminusDo - x$rd_term2 - x$f_term2)
   x$gm_bar <- x$gm*100/x$Press
+  
+  #different fractionation components as outputs--------------------------------------------------------------------
+  
+  #fractionation where Ci=Cc in the absence ot respiratory fractionation
+  x$delta_i <- (x$t2*x$a_prime)+(x$t2*((1+x$t)*b-x$a_prime)*x$CiCa)
+  
+  #fractionation associated with the diffusion of CO2 from intercellular airspace to chloroplast 
+  x$delta_gm = x$t3*(b - x$a_prime - (e*x$Rd)/(x$Photo+x$Rd)) * (x$Photo/(x$gm * x$CO2R))
+  
+  #most of the fractionation associated with respiration
+  x$delta_e <- x$t3 * (((e * x$Rd)/((x$Photo + x$Rd) * x$CO2R))*(x$Ci - x$Gstar))
+  
+  #fractionation associated with photorespiration
+  x$delta_f <- x$t3 * (f * (x$Gstar/x$CO2R))
+  
   return(x)
 }
-#----------------------------------------------------------------------------------------------
 
+###extract 13C of refernce gas from cylinder to use as delR in gmes equation----------------------------------------------------
 
-
+tank13 <- function(x){ #run on tdl formatted lists
+  #remove reference gases
+  dat <- x[x$SiteOutput != 3 & x$SiteOutput != 4, c("SiteOutput","Corrdel13C_Avg")]
+  #subset odd gas lines as they are the first reference line from cylinder
+  is.odd <- function(v) v %% 2 != 0
+  dat2 <- dat[which(is.odd(dat$SiteOutput)),]
+  #caluclate mean corr del from gmes eq
+  dat3 <- mean(dat2$Corrdel13C_Avg)
+  dat3 <- as.data.frame(dat3)
+  return(dat3)
+}
