@@ -1,10 +1,10 @@
 
 # read and format data ----------------------------------------------------
-setwd("C:/R-projects/EucFACE_gmes/rawdata")  ##if you are using project you do
+# setwd("C:/R-projects/EucFACE_gmes/rawdata")  ##if you are using project you do
 ##not need to set wd! (yeah!)
 
 gmes <-read.csv("Master_data_file_clean.csv")
-  gmes$Date <- as.Date(gmes$Date)
+  gmes$Date <- as.Date(gmes$Date,format ="%d/%m/%Y", tz="UTC")
   gmes$treatment <- with(gmes, paste(co2grow, position, sep="-"))
   gmes$Nm <- gmes$N.perc *10           # mass-based leaf N
   gmes$Na <- gmes$LMA * gmes$Nm / 1000 # Narea in g m-2
