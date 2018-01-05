@@ -37,6 +37,9 @@ legpch <- c(16,16,16,17)
 #try a bunch, keep the ones that may show a trend to analyze
 
 # Physiology (growth CO2)------------------------------------
+fit_agm <- lm(Photo ~ gmes, data = growCO2) 
+summary(fit_agm) 
+
 par(mar=c(5,5,1,1), cex=1.25, las=1, cex.axis=.8, cex.lab=1, mgp=c(3,1,0))
 
 plot(Photo ~ gmes, data=growCO2, col=co2grow, pch=pchs[canopy], ylim=c(0,30), 

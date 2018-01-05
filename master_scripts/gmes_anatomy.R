@@ -5,11 +5,47 @@ source("master_scripts/functions.R")
 
 # read and format data ----------------------------------------------------
 data <-read.csv("Master_data_file_clean.csv")
-#test <-read.csv("Tree-means_Gm-master.csv") 
+data2 <-read.csv("Tree-means_Gm-master2.csv")
+
 gmes <- gmes_format_func(data)
-##subsets for ablineclips
-ac <- gmes[gmes$co2grow == "amb",]
-ec <- gmes[gmes$co2grow == "elev",]
+gmes2 <- gmes_format_func2(data2)
+
+ac <- gmes2[gmes2$co2grow == "amb",]
+ec <- gmes2[gmes2$co2grow == "elev",]
+low <- gmes2[gmes2$canopy == "lower",]
+upp <- gmes2[gmes2$canopy == "upper",]
+
+#stats-------------------------------
+library(lme4)
+library(car)
+library(lmerTest)
+library(LMERConvenienceFunctions)
+library(MuMIn)
+
+#gm and mean parachenyma cell length
+fit_meanlength <- lmer(gmes~meanlength.par.mean*co2grow*canopy + (1|ring/tree),
+                          data=gmes2,na.action = na.omit)
+Anova(fit_meanlength, test = "F") #ignoring .07 interactions (depends on what we do)
+r.squaredGLMM(fit_meanlength2)
+#overall gm is correlated with para cell length P=0.01
+
+
+fit_parasum <- lmer(gmes~sumlength.par.mean*co2grow*canopy + (1|ring/tree),
+                       data=gmes2,na.action = na.omit)
+Anova(fit_parasum, test = "F") 
+r.squaredGLMM(fit_parasum)
+##same as para mean length (maybe not graph?????? as they are similar traits)
+
+fit_meso<- lmer(gmes~meso.mean.y*co2grow*canopy + (1|ring/tree),
+                       data=gmes2,na.action = na.omit)
+Anova(fit_meso, test = "F") #intertaction with mesophyll thickness and co2 treatment
+mesoac <- mean(ac$meso.mean.y)
+mesoec <- mean(ec$meso.mean.y)
+ #mesopyll thickness higher in eco2
+fit_meso2 <- lmer(gmes~meso.mean.y + (1|ring/tree),data=ac,na.action = na.omit)
+fit_meso2 <- lmer(gmes~meso.mean.y + (1|ring/tree),data=ec,na.action = na.omit)
+#only in ambient
+
 
 #plot objects-------------------------------
 gmlab <-expression(italic(g)[m]~~(mol~m^-2~s^-1))
@@ -21,30 +57,35 @@ pchs <- c(16,17)
 leglab <- c(expression(aCO[2]), expression(eCO[2]), "lower canopy", "upper canopy")
 
 # plotting----------------------------------------
+##2 panels with gm and parenca thickness and mesophyll length
 
-#####gm vs average parencyhma cell length
-fit_gmpara1 <- lm(gmes~meanlength.par.mean, data = ac) 
-summary(fit_gmpara1)
-fit_gmpara2 <- lm(gmes~meanlength.par.mean, data = ec) 
-summary(fit_gmpara2)
+palette(c("black", "red"))
+pchs <- c(16,17)
+gmlab <-expression(italic(g)[m]~~(mol~m^-2~s^-1))
+leglab <- c(expression(aCO[2]), expression(eCO[2]), "lower canopy", "upper canopy")
+allcols <- c("black", "red", "black", "black")
+legpch <- c(16,16,16,17)
 
-summary(fit_meanlength) # p = 0.03 (negative reltionship, R2 = 0.14)   
-plot(gmes~meanlength.par.mean, data=gmes, col=co2grow, pch=pchs[canopy], 
-     ylab=gmlab,xlab = tpc_lab, ylim=c(0,.5), xlim=c(20, 40))
+fit_meanlength2 <- lm(gmes~meanlength.par.mean,data=gmes2)
 
-plotrix::ablineclip(fit_gmpara1, lwd=2, lty=2, col="black",
-                    x1= min(ac$meanlength.par.mean), x2=max(ac$meanlength.par.mean))
-plotrix::ablineclip(fit_gmpara2, lwd=2, lty=2, col="red",
-                    x1= min(ec$meanlength.par.mean), x2=max(ec$meanlength.par.mean))
+#2panel plots----------------------------------------
+windows(10,6)
+par(mfrow=c(1,2), las=1, mgp=c(3,1,0), oma=c(5,5,1,1))
 
+par(mar=c(0,0,0,0),xpd=TRUE )
+plot(gmes ~ meanlength.par.mean, data=gmes2 ,type='n', ylim=c(0, .55),xlim=c(20, 40))
+predline(fit_meanlength2, col="grey20",lwd=2, lty=2)
+points(gmes ~ meanlength.par.mean, data=gmes2, col=co2grow, pch=pchs[canopy], cex=1.25)
+mtext(side=2, at=.275, line=3,text=gmlab, xpd=TRUE, las=3, cex=1.25)
+mtext(side=1, at=30, line=3,text="Parenchyma Cell Length  ()", xpd=TRUE, las=1, cex=1.25)
+text('A', x=20, y=.55, cex=1.25)
+legend("topright", leglab, pch=legpch, col=allcols,inset = 0.01, bty='n',cex=1)
 
-###need to reconcile variables
+par(mar=c(0,0,0,0),xpd=TRUE )
+plot(gmes~meso.mean.y, data=gmes, ylim=c(0, .55), yaxt='n', xlim=c(200, 400), type='n')
+axis(2, labels=FALSE)
+points(gmes ~ meso.mean.y, data=gmes2, col=co2grow, pch=pchs[canopy], cex=1.25)
+mtext(side=1, at=300, line=3,text="Mesophyll Thickness  ()", xpd=TRUE, las=1, cex=1.25)
+text('B', x=200, y=.55, cex=1.25)
+####add co2 model line
 
-###maybe we should choose one of the following 3 (most supported in literature)?
-fit_gmlength <- lm(gmes~length.par1.mean, data = gmes) 
-summary(fit_gmlength)
-# p = 0.007 (negative reltionship, R2 = 0.22), 
-#looks like eCO2 could be paralel but higher intercept compared to amb
-plot(gmes~length.par1.mean, data=gmes, col=co2grow, pch=pchs[canopy], 
-     ylab=gmlab,ylim=c(0,.5),xlim=c(20, 45))
-#fit ablineclip here
