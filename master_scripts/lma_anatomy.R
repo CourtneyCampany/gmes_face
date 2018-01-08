@@ -78,6 +78,7 @@ lmalab <- expression(LMA~~(g~cm^-2))
 leglab <- c(expression(aCO[2]), expression(eCO[2]), "lower canopy", "upper canopy")
 allcols <- c("black", "red", "black", "black")
 legpch <- c(16,16,16,17)
+library(plotrix)
 
 #for ablineclip
 mod_lma_mesothick3 <- lm(LMA~meso.mean.y, data=ac)
