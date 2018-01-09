@@ -3,7 +3,7 @@
 # setwd("C:/R-projects/EucFACE_gmes/rawdata")  ##if you are using project you do
 ##not need to set wd! (yeah!)
 
-gmes <-read.csv("Master_data_file_clean.csv")
+gmes <-read.csv("master_scripts/Master_data_file_clean.csv")
   gmes$Date <- as.Date(gmes$Date,format ="%d/%m/%Y", tz="UTC")
   gmes$treatment <- with(gmes, paste(co2grow, position, sep="-"))
   gmes$Nm <- gmes$N.perc *10           # mass-based leaf N
@@ -61,13 +61,20 @@ plot(Photo ~ mean_gs, data=growCO2, col=co2grow, pch=pchs[canopy], ylim=c(0,30),
 
   
 ##gm and cc are related
-fit_gmcc <- lm(gmes~mean_cc, data = growCO2) 
+fit_gmcc <- lm(mean_cc~gmes, data = growCO2) 
   summary(fit_gmcc) # significant relationship (P[1,25]<0.0001, R2 = 0.47)
   
-plot(gmes~mean_cc, data=growCO2, col=co2grow, pch=pchs[canopy], ylab=gmlab,
-     ylim=c(0,.5), xlim=c(0, 400))
-  ablineclip(fit_gmcc, lwd=2, lty=2, x1= min(growCO2$mean_cc), x2=max(growCO2$mean_cc))
+plot(mean_cc~gmes, data=growCO2, col=co2grow, pch=pchs[canopy], xlab=gmlab,
+     xlim=c(0,.5), ylim=c(0, 400))
+  ablineclip(fit_gmcc, lwd=2, lty=2, x1=.054, x2=.453)
 
+fit_gsci <- lm(mean_ci~mean_gs, data = growCO2) 
+  summary(fit_gsci) # significant relationship (P[1,25]<0.003)
+  
+plot(mean_ci~mean_gs, data=growCO2, col=co2grow, pch=pchs[canopy], ylab="",
+       xlim=c(0,.5), ylim=c(100, 400))
+  ablineclip(fit_gsci, lwd=2, lty=2, x1=min(growCO2$mean_gs), x2=max(growCO2$mean_gs))
+  
 #informative boxplots  
 boxplot(gmes~treatment, data=growCO2, ylab = gmlab)
 boxplot(mean_gs~treatment, data=growCO2, ylab = condlab) # 3 outliers?
