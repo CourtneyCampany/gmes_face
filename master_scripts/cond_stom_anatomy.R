@@ -101,7 +101,7 @@ fit_length_ac2 <- lm(mean_gs ~ stomlengthab , data=ac,na.action = na.omit)
 acupp <- gmes2[gmes2$co2grow=="amb" & gmes2$canopy == "upper",]
 fit_dens_acupp <- lm(mean_gs ~ stomdenab , data=acupp,na.action = na.omit)
 
-windows(10,6)
+# windows(10,6)
 par(mfrow=c(1,2), las=1, mgp=c(3,1,0), oma=c(5,5,1,1))
 
 par(mar=c(0,0,0,0),xpd=TRUE )
@@ -122,5 +122,5 @@ text('B', x=0, y=.5, cex=1.25)
 mtext(side=1, at=162.5, line=3,text=denslab, xpd=TRUE, las=1, cex=1.25)
 legend("topright", leglab, pch=legpch2, col=allcols,inset = 0.01, bty='n',cex=1)
 
-dev.copy2pdf(file= "master_scripts/cond_anatomy.pdf")
-dev.off()
+# dev.copy2pdf(file= "master_scripts/cond_anatomy.pdf")
+# dev.off()

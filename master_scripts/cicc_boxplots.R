@@ -24,7 +24,7 @@ eclc<- expression(atop(Elevated~CO[2]), Low~canopy)
 ecuc<- expression(atop(Elevated~CO[2]), High~canopy)
 
 #plotting---------------------------------------
-windows(12,6)
+# windows(12,6)
 par(mfrow=c(1,3), mar=c(5,5,1,1), cex.lab=1.25)
 
 boxplot(mean_ci~treatment, gmes2, ylab=cilab,names=FALSE, ylim=c(0,425), 
@@ -51,5 +51,5 @@ mtext(eclc, side=1,at=3, line=2.5, cex=.7)
 mtext(ecuc, side=1,at=4, line=2.5, cex=.7)
 text(x=.55, y=425, "C", cex=1.25)
 
-dev.copy2pdf(file= "master_scripts/cicc_box.pdf")
-dev.off()
+# dev.copy2pdf(file= "master_scripts/cicc_box.pdf")
+# dev.off()

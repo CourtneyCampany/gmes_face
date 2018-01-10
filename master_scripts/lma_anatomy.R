@@ -87,7 +87,7 @@ mod_lma_mesothick_ac <- lm(LMA~meso.mean.y, data=ac)
 mod_lma_mesothick_low <- lm(LMA~meso.mean.y, data=low)
 mod_lma_uppderm <- lm(LMA~epilower.mean, data=low)
 
-windows(10,6)
+# windows(10,6)
 par(mfrow=c(1,2), las=1, mgp=c(3,1,0), oma=c(5,5,1,1))
 
 par(mar=c(0,0,0,0),xpd=TRUE )
@@ -116,5 +116,5 @@ mtext(side=1, at=300, line=3,text=expression(Mesophyll~thickness~~(mu*m)),
       xpd=TRUE, las=1, cex=1.25)
 legend("topright", leglab, pch=legpch2, col=allcols,inset = 0.01, bty='n',cex=1)
 
-dev.copy2pdf(file= "master_scripts/lma_anatomy.pdf")
-dev.off()
+# dev.copy2pdf(file= "master_scripts/lma_anatomy.pdf")
+# dev.off()

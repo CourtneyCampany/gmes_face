@@ -57,7 +57,7 @@ legpch2 <- c(1,1,1,2)
 library(plotrix)
 
 #2panel plots----------------------------------------
-windows(10,6)
+# windows(10,6)
 par(mfrow=c(1,2), las=1, mgp=c(3,1,0), oma=c(5,5,1,1))
 
 par(mar=c(0,0,0,0),xpd=TRUE )
@@ -76,5 +76,5 @@ points(Photo ~ gmes, data=gmes, col=co2grow, pch=pchs2[canopy], cex=1.25)
 mtext(side=1, at=.28, line=3,text=gmlab, xpd=TRUE, las=1, cex=1.25)
 text('B', x=0, y=30, cex=1.25)
 
-dev.copy2pdf(file= "master_scripts/photo_gmgs.pdf")
-dev.off()
+# dev.copy2pdf(file= "master_scripts/photo_gmgs.pdf")
+# dev.off()

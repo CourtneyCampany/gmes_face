@@ -48,36 +48,32 @@ upp <- gmes2[gmes2$canopy == "upper",]
 # #only in ambient
 
 
-#plot objects-------------------------------
-gmlab <-expression(italic(g)[m]~~(mol~m^-2~s^-1))
-tpc_lab <- expression(Parenchyma~cell~thickness~~(mu*m))
-allcols <- c("black", "red", "black", "black")
-palette(c("black", "red"))
-pchs <- c(16,17)
-pchs2 <- c(1,2)
-leglab <- c(expression(aCO[2]), expression(eCO[2]), "lower canopy", "upper canopy")
-legpch <- c(16,16,16,17)
-legpch2 <- c(1,1,1,2)
+
+
 
 # plotting----------------------------------------
 ##2 panels with gm and parenca thickness and mesophyll length
 
 palette(c("black", "red"))
 pchs <- c(16,17)
+pchs2 <- c(1,2)
 gmlab <-expression(italic(g)[m]~~(mol~m^-2~s^-1))
+tpc_lab <- expression(Parenchyma~cell~thickness~~(mu*m))
+paralab <- expression(Total~parenchyma~cell~length~~(mu*m))
+mesolab <- expression(Mesophyll~thickness~~(mu*m))
 leglab <- c(expression(aCO[2]), expression(eCO[2]), "lower canopy", "upper canopy")
 allcols <- c("black", "red", "black", "black")
 legpch <- c(16,16,16,17)
-paralab <- expression(Total~parenchyma~cell~length~~(mu*m))
-mesolab <- expression(Mesophyll~thickness~~(mu*m))
+legpch2 <- c(1,1,1,2)
 
+#linear models for regression line
 fit_sumlength2 <- lm(gmes~sumlength.par.mean,data=gmes2)
 fit_meso_ac <- lm(gmes~meso.mean.y,data=ac)
 library(scales)
 library(plotrix)
 
 #2panel plots----------------------------------------
-windows(10,6)
+# windows(10,6)
 par(mfrow=c(1,2), las=1, mgp=c(3,1,0), oma=c(5,5,1,1))
 
 par(mar=c(0,0,0,0),xpd=TRUE )
@@ -99,6 +95,6 @@ mtext(side=1, at=300, line=3,text=mesolab, xpd=TRUE, las=1, cex=1.25)
 text('B', x=200, y=.55, cex=1.25)
 legend("topright", leglab, pch=legpch2, col=allcols,inset = 0.01, bty='n',cex=1)
 
-dev.copy2pdf(file= "master_scripts/gm_anatomy.pdf")
-dev.off()
+# dev.copy2pdf(file= "master_scripts/gm_anatomy.pdf")
+# dev.off()
 
