@@ -11,9 +11,9 @@ library(lmerTest)
 library(sciplot)
 
 # Set working directory
-setwd("//ad.uws.edu.au/dfshare/HomesHWK$/30021697/My Documents/Documents_Crous/EucFACE/Kristine-TDL/TDL_Oct2014/Campaigns_CanopyDiff")
+# setwd("//ad.uws.edu.au/dfshare/HomesHWK$/30021697/My Documents/Documents_Crous/EucFACE/Kristine-TDL/TDL_Oct2014/Campaigns_CanopyDiff")
 #read in datafile
-across <-read.csv("Tree_aver_age_position_EucFACE.csv") #data for four campaigns where we have upper and lower canopy results
+across <-read.csv("april/Tree_aver_age_position_EucFACE.csv") #data for four campaigns where we have upper and lower canopy results
 
 str(across)
 

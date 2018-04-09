@@ -1,6 +1,6 @@
 
 # read and format data ----------------------------------------------------
- setwd("C:/R-projects/EucFACE_gmes/rawdata")  ##if you are using project you do
+ # setwd("C:/R-projects/EucFACE_gmes/rawdata")  ##if you are using project you do
 ##not need to set wd! (yeah!)
 
 gmes <-read.csv("C:/R-projects/EucFACE_gmes/masterscripts/Master_data_file_clean.csv")
