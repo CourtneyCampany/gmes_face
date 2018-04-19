@@ -33,7 +33,7 @@ upp <- gmes2[gmes2$canopy == "upper",]
 # fit_meanlength <- lmer(gmes~meanlength.par.mean*co2grow*canopy + (1|ring/tree),
 #                           data=gmes2,na.action = na.omit)
 # Anova(fit_meanlength, test = "F") #ignoring .07 interactions (depends on what we do)
-# r.squaredGLMM(fit_meanlength2)
+# r.squaredGLMM(fit_meanlength)
 # ##same as para sum length (maybe not use?????? as they are similar traits)
 # 
 # fit_meso<- lmer(gmes~meso.mean.y*co2grow*canopy + (1|ring/tree),
@@ -43,12 +43,10 @@ upp <- gmes2[gmes2$canopy == "upper",]
 # mesoac <- mean(ac$meso.mean.y)
 # mesoec <- mean(ec$meso.mean.y)
 #  #mesopyll thickness higher in eco2
-# fit_meso2 <- lmer(gmes~meso.mean.y + (1|ring/tree),data=ac,na.action = na.omit)
-# fit_meso2 <- lmer(gmes~meso.mean.y + (1|ring/tree),data=ec,na.action = na.omit)
-# #only in ambient
-
-
-
+# fit_meso2 <- lmer(gmes~meso.mean.y*co2grow + (1|ring/tree),
+#                   data=gmes2,na.action = na.omit)
+# Anova(fit_meso2, test = "F") #intertaction with mesophyll thickness and co2 treatment
+# r.squaredGLMM(fit_meso2)
 
 
 # plotting----------------------------------------
@@ -73,7 +71,7 @@ library(scales)
 library(plotrix)
 
 #2panel plots----------------------------------------
-# windows(10,6)
+windows(10,6)
 par(mfrow=c(1,2), las=1, mgp=c(3,1,0), oma=c(5,5,1,1))
 
 par(mar=c(0,0,0,0),xpd=TRUE )
@@ -95,6 +93,6 @@ mtext(side=1, at=300, line=3,text=mesolab, xpd=TRUE, las=1, cex=1.25)
 text('B', x=200, y=.55, cex=1.25)
 legend("topright", leglab, pch=legpch2, col=allcols,inset = 0.01, bty='n',cex=1)
 
-# dev.copy2pdf(file= "master_scripts/gm_anatomy.pdf")
-# dev.off()
+dev.copy2pdf(file= "master_scripts/gm_anatomy.pdf")
+dev.off()
 

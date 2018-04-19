@@ -87,23 +87,11 @@ mod_lma_mesothick_ac <- lm(LMA~meso.mean.y, data=ac)
 mod_lma_mesothick_low <- lm(LMA~meso.mean.y, data=low)
 mod_lma_uppderm <- lm(LMA~epilower.mean, data=low)
 
-# windows(10,6)
-par(mfrow=c(1,2), las=1, mgp=c(3,1,0), oma=c(5,5,1,1))
+windows()
+par(las=1, mgp=c(3,1,0), mar=c(5,5,1,1))
 
-par(mar=c(0,0,0,0),xpd=TRUE )
-plot(LMA~epilower.mean, data=gmes2, ylab="", xlab="", xlim=c(10, 30), ylim=c(100, 300), type='n')
-points(LMA~epilower.mean, data=gmes2,col=co2grow, pch=pchs2[canopy], cex=1.5)
-points(LMA~epilower.mean, data=low,col=co2grow, pch=pchs[canopy], cex=1.5)
-ablineclip(mod_lma_uppderm, x1=min(low$epilower.mean), x2=max(low$epilower.mean),
-           lwd=2, lty=2)
-
-mtext(side=1, at=20, line=3,text=expression(Lower~epidermis~thickness~~(mu*m)),
-      xpd=TRUE, las=1, cex=1.25)
-mtext(side=2, at=200, line=3,text=lmalab,xpd=TRUE, las=3, cex=1.25)
-
-par(mar=c(0,0,0,0),xpd=TRUE )
 plot(LMA~meso.mean.y, data=gmes2,ylim=c(100, 300), xlim=c(200, 400), type='n', 
-     ylab="", xlab="", yaxt='n')
+     ylab=lmalab, xlab=expression(Mesophyll~thickness~~(mu*m)))
 points(LMA~meso.mean.y, data=gmes2,col=co2grow, pch=pchs2[canopy], cex=1.5)
 ablineclip(mod_lma_mesothick_ac, x1=min(ac$meso.mean), x2=max(ac$meso.mean),
                     lwd=2, lty=2) #aco2 
@@ -112,9 +100,8 @@ points(LMA~meso.mean.y, data=ac, col=co2grow, pch=pchs[canopy], cex=1.5)
 ablineclip(mod_lma_mesothick_low, x1=min(low$meso.mean.y), x2=max(low$meso.mean.y),
            lwd=2, lty=1) #lower
 points(LMA~meso.mean.y, data=low, col=co2grow, pch=pchs[canopy], cex=1.5)
-mtext(side=1, at=300, line=3,text=expression(Mesophyll~thickness~~(mu*m)),
-      xpd=TRUE, las=1, cex=1.25)
+
 legend("topright", leglab, pch=legpch2, col=allcols,inset = 0.01, bty='n',cex=1)
 
-# dev.copy2pdf(file= "master_scripts/lma_anatomy.pdf")
-# dev.off()
+dev.copy2pdf(file= "master_scripts/lma_anatomy.pdf")
+dev.off()
