@@ -81,7 +81,7 @@ ablineclip(fit_sumlength2, x1=min(gmes2$sumlength.par.mean),x2=max(gmes2$sumleng
 points(gmes ~ sumlength.par.mean, data=gmes2, col=co2grow, pch=pchs[canopy], cex=1.25)
 mtext(side=2, at=.275, line=3,text=gmlab, xpd=TRUE, las=3, cex=1.25)
 mtext(side=1, at=90, line=3,text=paralab, xpd=TRUE, las=1, cex=1.25)
-text('A', x=20, y=.55, cex=1.25)
+text('A', x=60, y=.55, cex=1.25)
 
 par(mar=c(0,0,0,0),xpd=TRUE )
 plot(gmes~meso.mean.y, data=gmes, ylim=c(0, .55), yaxt='n', xlim=c(200, 400), type='n')

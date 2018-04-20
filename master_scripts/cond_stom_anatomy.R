@@ -3,10 +3,8 @@
 source("master_scripts/functions.R")
 
 # read and format data ----------------------------------------------------
-data <-read.csv("master_scripts/Master_data_file_clean.csv")
 data2 <-read.csv("master_scripts/Tree-means_Gm-master2.csv")
 
-gmes <- gmes_format_func(data)
 gmes2 <- gmes_format_func2(data2)
 
 ##subsets for ablineclips
@@ -14,6 +12,12 @@ ac <- gmes2[gmes2$co2grow == "amb",]
 ec <- gmes2[gmes2$co2grow == "elev",]
 low <- gmes2[gmes2$canopy == "lower",]
 upp <- gmes2[gmes2$canopy == "upper",]
+
+# library(sciplot)
+# library(doBy)
+# 
+# stolen_means <- summaryBy(stomlengthad + stomlengthab ~ co2grow + position,
+#                           data=gmes2, FUN=c(mean, se))
 
 #stats----------------------------
 # library(lme4)
@@ -101,7 +105,7 @@ fit_length_ac2 <- lm(mean_gs ~ stomlengthab , data=ac,na.action = na.omit)
 acupp <- gmes2[gmes2$co2grow=="amb" & gmes2$canopy == "upper",]
 fit_dens_acupp <- lm(mean_gs ~ stomdenab , data=acupp,na.action = na.omit)
 
-# windows(10,6)
+windows(10,6)
 par(mfrow=c(1,2), las=1, mgp=c(3,1,0), oma=c(5,5,1,1))
 
 par(mar=c(0,0,0,0),xpd=TRUE )
@@ -118,9 +122,9 @@ plot(mean_gs ~ stomdenab, data=gmes2,  ylim=c(0, .5), xlim=c(75, 250), type='n',
 ablineclip(fit_dens_acupp, x1=min(acupp$stomdenab), x2=max(acupp$stomdenab), lty=2, lwd=2)
 points(mean_gs ~ stomdenab, data=gmes2, col=co2grow, pch=pchs2[canopy], cex=1.25)
 points(mean_gs ~ stomdenab, data=acupp, col=co2grow, pch=pchs[canopy], cex=1.25)
-text('B', x=0, y=.5, cex=1.25)
+text('B', x=75, y=.5, cex=1.25)
 mtext(side=1, at=162.5, line=3,text=denslab, xpd=TRUE, las=1, cex=1.25)
 legend("topright", leglab, pch=legpch2, col=allcols,inset = 0.01, bty='n',cex=1)
 
-# dev.copy2pdf(file= "master_scripts/cond_anatomy.pdf")
-# dev.off()
+dev.copy2pdf(file= "master_scripts/cond_anatomy.pdf")
+dev.off()

@@ -140,7 +140,7 @@ library(sciplot)
 ## NOTE: before doing these analyses we need tree level data, 
 ## that is R6 outer trees need to be averaged
 ## load the new datafile here 
-gmes3 <-read.csv("Tree-means_Gm-master.csv") # reload after adjusting names!!
+gmes3 <-read.csv("master_scripts/Tree-means_Gm-master2.csv") # reload after adjusting names!!
 # and subset again for growth CO2 only ## give the object a different name!
 ambco2 <- subset(gmes3, co2grow == "amb" & co2meas == "amb")
 elevco2 <- subset(gmes3, co2grow == "elev" & co2meas == "elev")
@@ -213,7 +213,6 @@ Anova(mod_gs_meas, test = "F")
 
 
 # stats photosynthesis ----------------------------------------------------
-
 mod_vcmax<- lmer(Vcmax ~ co2grow*position + (1|ring/tree), data=growCO2, na.action = na.omit)
   Anova(mod_vcmax, test = "F")
   VarCorr(mod_vcmax)
@@ -227,7 +226,6 @@ mod_photo <- lmer(Photo ~ co2grow*position + (1|ring/tree), data=growCO2, na.act
 
 
 # stats chemistry and lma -------------------------------------------------
-
 mod_lma<- lmer(LMA ~ co2grow*position + (1|ring/tree), data=growCO2, na.action = na.omit)
   Anova(mod_lma, test = "F")
 
@@ -238,6 +236,14 @@ mod_nitro <- lmer(N.perc ~ co2grow*position + (1|ring/tree), data=growCO2, na.ac
   # leaf N is reduced in eCO2 in the upper canopy only, 
   # but same values in the lower canopy between the 2 cO2 treatments
 
+mod_nitro2 <- lmer(Nm ~ co2grow*position + (1|ring/tree), data=growCO2, na.action = na.omit)
+  Anova(mod_nitro2, test = "F")
+  visreg(mod_nitro2, "co2grow", by= "position", overlay =T, ylab = "N.perc")
+
+nm_uppac <- mean(growCO2[growCO2$canopy=="upper" & growCO2$co2grow == "amb", "Nm"])
+nm_uppec <- mean(growCO2[growCO2$canopy=="upper" & growCO2$co2grow == "elev", "Nm"])
+
+(nm_uppac-nm_uppec) /nm_uppac
 
 # stats leaf anatomy ------------------------------------------------------
 mod_thick <- lmer(leafw.mean.y ~ co2grow*position + (1|ring/tree), data=growCO2, 

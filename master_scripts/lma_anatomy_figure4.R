@@ -16,13 +16,13 @@ low <- gmes2[gmes2$canopy == "lower",]
 upp <- gmes2[gmes2$canopy == "upper",]
 
 #stats-------------------------------------
-library(lme4)
-library(car)
-library(lmerTest)
-library(LMERConvenienceFunctions)
-library(MuMIn)
-library(visreg)
-
+# library(lme4)
+# library(car)
+# library(lmerTest)
+# library(LMERConvenienceFunctions)
+# library(MuMIn)
+# library(visreg)
+# 
 # #lma and leaf thickness (autocorrelated ??? ignoring fow now)
 # mod_lma_leafw <- lmer(LMA~leafw.mean.y*co2grow*canopy + (1|ring/tree), data=gmes2,
 #                       na.action = na.omit)
@@ -30,13 +30,13 @@ library(visreg)
 # r.squaredGLMM(mod_lma_leafw)
 # visreg(mod_lma_leafw, "leafw.mean.y", by= "co2grow", overlay =T)
 # visreg(mod_lma_leafw, "leafw.mean.y", by= "canopy", overlay =T)
-
-##lma and upper epidermis
+# 
+# #lma and upper epidermis
 # mod_lma_epiupp <- lmer(LMA~epiupper.mean*co2grow*canopy + (1|ring/tree),
 #                        data=gmes2,na.action = na.omit)
 # Anova(mod_lma_epiupp, test = "F") #.09 marginal interaction with canopy
 # r.squaredGLMM(mod_lma_epiupp)
-
+# 
 # mod_lma_epilow <- lmer(LMA~epilower.mean*co2grow*canopy + (1|ring/tree),
 #                        data=gmes2,na.action = na.omit)
 # Anova(mod_lma_epilow, test = "F") #p=0.050 interaction with canopy
@@ -55,21 +55,27 @@ library(visreg)
 # Anova(mod_lma_mesothick, test = "F")#interatctions between mesophyll and co2 and canopy
 # summary(mod_lma_mesothick)
 # r.squaredGLMM(mod_lma_mesothick)
-#   #co2
+#   #important effects
 #   visreg(mod_lma_mesothick, "meso.mean.y", by= "co2grow", overlay =T)
+#   visreg(mod_lma_mesothick, "meso.mean.y", by= "canopy", overlay =T)
+# 
 #   mod_lma_mesothick2 <- lmer(LMA~meso.mean.y+ (1|ring/tree),data=ac,na.action = na.omit)
 #   mod_lma_mesothick3 <- lmer(LMA~meso.mean.y+ (1|ring/tree),data=ec,na.action = na.omit)
 #   Anova(mod_lma_mesothick2, test = "F") ###ac only
 #   Anova(mod_lma_mesothick3, test = "F")
 #   r.squaredGLMM(mod_lma_mesothick2) #r2 = .63, .73
-#   #canopy (see visreg, I think postive in lower canopy 
+#   #canopy (see visreg, I think postive in lower canopy
 #   #but similar stats code as aboev doesnt doesnt work)
 #   visreg(mod_lma_mesothick, "meso.mean.y", by= "canopy", overlay =T)
-# 
+#   mod_lma_mesothick4 <- lmer(LMA~meso.mean.y * co2grow + (1|ring/tree),
+#                              data=gmes2,na.action = na.omit)
+#   Anova(mod_lma_mesothick4, test = "F")
+#   visreg(mod_lma_mesothick4, "meso.mean.y", by= "co2grow", overlay =T)
+#   
 # ##uses LMERtest package... (doesnt help)
 #   lsmeansLT(mod_lma_mesothick, test.effs = c("meso.mean.y", "canopy"))
 #   lsmeansLT(mod_lma_mesothick, test.effs = c("meso.mean.y", "co2grow"))
-#   
+
 #plotting----------------------------
 palette(c("black", "red"))
 pchs <- c(16,17)

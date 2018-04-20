@@ -1,7 +1,7 @@
 
 # read and format data ----------------------------------------------------
 
-gmes <-read.csv("master_data_file_clean.csv")
+gmes <-read.csv("master_scripts/Master_data_file_clean.csv")
   gmes$Date <- as.Date(gmes$Date)
   gmes$treatment <- with(gmes, paste(co2grow, position, sep="-"))
   gmes$Nm <- gmes$N.perc *10           # mass-based leaf N
@@ -234,4 +234,33 @@ mod_sdup <- lmer(stomdenad ~ co2grow*position + (1|ring/tree), data=growCO2, na.
 
 mod_sdunder<- lmer(stomdenab ~ co2grow*position + (1|ring/tree), data=growCO2, na.action = na.omit) #upperside stomata
   Anova(mod_sdunder, test = "F")
+
+  
+  
+  
+##testing co2 measurement instant
+short_ambco2 <- subset(gmes[,c(1:10, 31)], co2grow == "amb" & co2meas == "amb")
+  names(short_ambco2)[9:11] <- c("photo_amb", "gs_amb", "gm_amb")
+short_elevco2 <- subset(gmes[,c(1:10, 31)], co2grow == "amb" & co2meas == "elev")
+  names(short_elevco2)[9:11] <- c("photo_ele", "gs_ele", "gm_ele")
+short_CO2 <- cbind(short_ambco2,short_elevco2[,8:11])
+##id's match with cbind
+(mean(short_CO2$gm_ele, na.rm=TRUE)-mean(short_CO2$gm_amb, na.rm=TRUE))/(mean(short_CO2$gm_ele, na.rm=TRUE))
+
+
+##all instantaneous
+short_ambco2_all <- gmes[gmes$co2grow %in% c("amb", "elev") & gmes$co2meas == "amb",
+                          c(1:10, 31)]
+names(short_ambco2_all)[9:11] <- c("photo_amb", "gs_amb", "gm_amb")
+short_ambco2_all <- short_ambco2_all[short_ambco2_all$id != "408_lower",]
+
+short_elevco2_all <- gmes[gmes$co2grow %in% c("amb", "elev") & gmes$co2meas == "elev",
+                             c(1:10, 31)]
+names(short_elevco2_all)[9:11] <- c("photo_ele", "gs_ele", "gm_ele")
+
+short_CO2_all<- cbind(short_ambco2_all,short_elevco2_all[,8:11])
+
+##id's match with cbind
+(mean(short_CO2_all$gm_ele, na.rm=TRUE)-mean(short_CO2_all$gm_amb, na.rm=TRUE))/
+  (mean(short_CO2_all$gm_ele, na.rm=TRUE))
 
