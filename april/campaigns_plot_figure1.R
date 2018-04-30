@@ -29,7 +29,7 @@ pchs2 <- c(1,1,16,16)
 
 #plotting---------
 windows()
-par(oma=c(5,7,3,1), mfrow=c(4,2), mar=c(0,0,0,0), pch=16, lwd=1.5)
+par(oma=c(5,7,3,1), mfrow=c(4,2), mar=c(0,0,0,0), pch=16, lwd=1.25)
 
 #photosynthesis-aco2
 plot(photo ~ Date, data=aco2_low, type="b", pch=pchs2,lty=3,
@@ -106,7 +106,7 @@ text(datelab, 200, "F", cex=1.2)
 
 #lma-aco2
 plot(LMA ~ Date, data=aco2_low,  xlim=daterange,
-     xlab="",ylab="", ylim=c(0, 225), xaxt='n', cex=1.25,type="b", pch=pchs2,lty=3)
+     xlab="",ylab="", ylim=c(0, 240), xaxt='n', cex=1.25,type="b", pch=pchs2,lty=3)
 points(LMA ~ Date, data=aco2_upp,  type="b",pch=pchs2, cex=1.25)
 axis(1, labels=FALSE, at=unique(aco2$Date))
 text(unique(aco2$Date), par("usr")[3] - 45, srt = 45,
@@ -116,10 +116,10 @@ with(aco2, arrows(Date, LMA, Date, LMA+se.LMA, angle=90, lwd=1,
 with(aco2, arrows(Date, LMA, Date, LMA-se.LMA, angle=90, lwd=1,
                   length=.03))
 mtext(lmalab, side=2, line=4, cex=.8)
-text(datelab, 210, "G",cex=1.2)
+text(datelab, 230, "G",cex=1.2)
 
 #lma-eco2
-plot(LMA ~ Date, data=eco2_low, xlim=daterange, xlab="",ylab="", ylim=c(0, 225), 
+plot(LMA ~ Date, data=eco2_low, xlim=daterange, xlab="",ylab="", ylim=c(0, 240), 
      xaxt='n', cex=1.25,yaxt='n', type="b", pch=pchs2,lty=3)
 points(LMA ~ Date, data=eco2_upp, type="b",pch=pchs2, cex=1.25)
 axis(1, labels=FALSE, at=unique(aco2$Date))
@@ -130,7 +130,7 @@ with(eco2, arrows(Date, LMA, Date, LMA+se.LMA, angle=90, lwd=1,
                   length=.03))
 with(eco2, arrows(Date, LMA, Date, LMA-se.LMA, angle=90, lwd=1,
                   length=.03))
-text(datelab, 210, "H",cex=1.2)
+text(datelab, 230, "H",cex=1.2)
 
 dev.copy2pdf(file= "output/campaigns.pdf")
 dev.off()
