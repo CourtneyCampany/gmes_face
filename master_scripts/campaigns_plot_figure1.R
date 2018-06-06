@@ -1,6 +1,6 @@
 ##gas exchange campaigns------
 
-ge <- read.csv("april/face_photo_means.csv")
+ge <- read.csv("master_scripts/face_photo_means.csv")
   ge <- ge[complete.cases(ge),]
   ge <- droplevels(ge)
   ge$Date <- paste(ge$Campaign, "01", sep="_")
@@ -132,7 +132,7 @@ with(eco2, arrows(Date, LMA, Date, LMA-se.LMA, angle=90, lwd=1,
                   length=.03))
 text(datelab, 230, "H",cex=1.2)
 
-dev.copy2pdf(file= "output/campaigns.pdf")
+dev.copy2pdf(file= "master_scripts/campaigns.pdf")
 dev.off()
 
 

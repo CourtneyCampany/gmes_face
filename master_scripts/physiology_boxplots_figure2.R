@@ -9,6 +9,7 @@ data2 <-read.csv("master_scripts/Tree-means_Gm-master2.csv")
 gmes <- gmes_format_func(data)
 gmes2 <- gmes_format_func2(data2)
 
+##can choose here which bad points to delete
 not422 <- gmes2[gmes2$tree != "422",]
 not408 <- gmes2[gmes2$tree != "408",]
 
@@ -33,20 +34,20 @@ windows()
 
 par(mfrow=c(2,2), oma=c(5,5,1,5),mar=c(0,0,0,0), cex.lab=1.25)
 #gs
-boxplot(mean_gs~treatment, gmes2, ylab="",names=FALSE, ylim=c(0,.55), 
+boxplot(mean_gs~treatment, not422, ylab="",names=FALSE, ylim=c(0,.55), 
         outline=FALSE, border=cols, xaxt='n')
 text(x=.55, y=.55, "A", cex=1.25)
 mtext(condlab, side=2, line=3)
 
 #gm
-boxplot(gmes~treatment, gmes2, ylab="",names=FALSE, ylim=c(0,.55), 
+boxplot(gmes~treatment, not422, ylab="",names=FALSE, ylim=c(0,.55), 
         outline=FALSE, border=cols, xaxt='n', yaxt='n')
 text(x=.55, y=.55, "B", cex=1.25)
 mtexti(gmlab, 4, outer=TRUE, cex=1.25, off=.6)
 axis(4, labels=TRUE)
 
 #ci
-boxplot(mean_ci~treatment, gmes2, ylab="",names=FALSE, ylim=c(0,435), 
+boxplot(mean_ci~treatment, not422, ylab="",names=FALSE, ylim=c(0,435), 
         outline=FALSE, border=cols)
 mtext(canopy, side=1,at=1:4, line=1, cex=.9)
 mtext(co2lab, side=1, at=c(1.5, 3.5),line=3, cex=.9)
@@ -54,7 +55,7 @@ text(x=.55, y=430, "C", cex=1.25)
 mtext(cilab, side=2, line=3)
 
 #cc
-boxplot(mean_cc~treatment, gmes2, ylab="",names=FALSE, ylim=c(0,435), 
+boxplot(mean_cc~treatment, not422, ylab="",names=FALSE, ylim=c(0,435), 
         outline=FALSE, border=cols, yaxt='n')
 text(x=.55, y=430, "D", cex=1.25)
 axis(4, labels=TRUE)
